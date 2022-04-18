@@ -1,0 +1,33 @@
+1 - create a click event that show le clientX and clientY
+2 - create a keyup event that show the key code
+3 - create a keyUp event using rxjs with select event code
+4 - create click event that return you clicked
+5 - create an interval of 1S that take the ten first value
+    and log it in the console
+6 - create a function called intervaled he take 2 parameters
+    the first is operator and the second one is the 
+    operatorName it return an rxjs interval of 1S he combine 
+    and take the first 10 value, the operator and log in the
+    console the operatorName and the value return by the
+    operator
+7 - combine some timeBased operator the first one is and rxjs
+    interval of 1S and return the index and the current value
+    it take the first 10 value the rest call intervaled and 
+    the operator will be [auditTime, bufferTime, 
+    debounceTime, sampleTime, ThrottleTime] they emit each 1S
+    and the operatorName is the operator to String without the
+    parantheses
+    Link : https://www.learnrxjs.io/learn-rxjs/concepts/
+    time-based-operators-comparison
+8 - Create 3 timer called respectively timerOne, timerTwo,
+    TimerThree the first one emit his first value after 1S, 2S
+    3S and they emit each 4S
+    combine then all and log their value into the console
+    https://www.learnrxjs.io/learn-rxjs/operators/combination/
+    combinelatest
+9 - create Two buttons and two div that give the bouttons click
+    count, create the third div that count the total click
+    create a observables function that return a event click
+    every click he set the value to one he caculate the total
+    and the initial click value is 0
+
