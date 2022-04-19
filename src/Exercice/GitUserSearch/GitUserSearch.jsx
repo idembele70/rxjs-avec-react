@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useEffect, useId, useState } from 'react'
 import styled from 'styled-components';
+import { loading$, Users$ } from '../../rxjs';
 import GitSearchBar from './GitSearchBar';
 import GitUserCard from './GitUserCard';
+import uniqid from 'uniqid'
+import { pipe, tap } from 'rxjs';
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -23,17 +26,43 @@ const Bottom = styled.div`
   max-width: 1440px;
 `;
 const GitUserSearch = () => {
-  const props = {
-    id: 1,
-    login: "mojombo",
-    avatar_url: "https://avatars.githubusercontent.com/u/1?v=4",
-    html_url: "https://github.com/mojombo"
-  }
+  const [usersList, setUsersList] = useState([]);
+  const [usersRender, setUsersRender] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    loading$.subscribe(
+      v => setLoading(v)
+    )
+    Users$.subscribe(v => {
+      setUsersList(v)
+    })
+  })
+
+  useEffect(() => {
+    pipe(
+      tap(
+        setUsersRender(
+          usersList.map((user, idx) => {
+            const { login, avatar_url, html_url } = user
+            const id = uniqid()
+            const props = { id, login, avatar_url, html_url }
+            return <GitUserCard key={id} {...props} id={id} />
+          })
+        )
+      ),
+      tap(
+        loading$.next(false)
+      )
+    )
+
+  }, [usersList])
+
   return (
     <Container>
       <Top><GitSearchBar /></Top>
       <Bottom>
-        {Array(10).fill(1).map((_, idx) => <GitUserCard key={idx} {...props} id={idx} />)}
+        {loading && "Loading ...."}
+        {usersRender}
       </Bottom>
     </Container>
   )

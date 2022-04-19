@@ -1,15 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from 'styled-components';
-import GitUserSearch from "./Exercice/GitUserSearch/GitUserSearch";
-import { sourced } from "./rxjs";
+import { Error$, mapSource$, numbers$, reject$, source$, sourcePromise$, stringToChar$ } from "./rxjs";
 const Container = styled.div`
 height: 100vh;
 width: 100vw;
 `
+const Render = styled.h3`
+  font-size: 24px;
+  text-align: center;
+  color: ${props => props.color};
+`;
 export default function App() {
+  const [value, setValue] = useState(null);
+  useEffect(() => {
+    reject$.subscribe(console.log)
+  }, [])
   return (
     <Container>
-      <GitUserSearch />
+      <Render>
+        {value}
+      </Render>
     </Container>
   );
 }

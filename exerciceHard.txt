@@ -27,3 +27,9 @@
     Example 3: Observable from collection
 8 - https://www.learnrxjs.io/learn-rxjs/operators/creation/of
     Example 1: Emitting a sequence of numbers
+    Example 2: Emitting an object, array, and function
+9 - https://www.learnrxjs.io/learn-rxjs/operators/error_handling/catch
+    1 - Example 1: Catching error from observable
+    2 - Example 2: Catching rejected promise
+    3 Example 3: Catching errors comparison when using switchMap/mergeMap/concatMap/exhaustMap
+

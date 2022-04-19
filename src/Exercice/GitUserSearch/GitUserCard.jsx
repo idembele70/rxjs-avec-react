@@ -64,7 +64,7 @@ const GitUserCard = props => {
 }
 
 GitUserCard.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   login: PropTypes.string.isRequired,
   avatar_url: PropTypes.string.isRequired,
   html_url: PropTypes.string.isRequired
