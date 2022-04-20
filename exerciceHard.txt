@@ -32,4 +32,3 @@
     1 - Example 1: Catching error from observable
     2 - Example 2: Catching rejected promise
     3 Example 3: Catching errors comparison when using switchMap/mergeMap/concatMap/exhaustMap
-

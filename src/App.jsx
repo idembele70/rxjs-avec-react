@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from 'styled-components';
-import { Error$, mapSource$, numbers$, reject$, source$, sourcePromise$, stringToChar$ } from "./rxjs";
+import GitUserSearch from "./Exercice/GitUserSearch/GitUserSearch";
 const Container = styled.div`
 height: 100vh;
 width: 100vw;
@@ -11,14 +11,10 @@ const Render = styled.h3`
   color: ${props => props.color};
 `;
 export default function App() {
-  const [value, setValue] = useState(null);
-  useEffect(() => {
-    reject$.subscribe(console.log)
-  }, [])
   return (
     <Container>
       <Render>
-        {value}
+        <GitUserSearch />
       </Render>
     </Container>
   );

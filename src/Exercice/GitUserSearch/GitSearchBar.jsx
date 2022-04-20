@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
+import { combineLatest, debounceTime, distinctUntilChanged, fromEvent, map, of, pluck, startWith, switchMap, tap } from 'rxjs';
 import styled from 'styled-components';
+import { loading$, searchedUsers$, Users$ } from '../../rxjs';
 const Container = styled.div`
   width: 90vw;
   max-width: 250px;
@@ -49,15 +51,36 @@ const Input = styled.input`
 `;
 const GitSearchBar = () => {
   const [search, setSearch] = useState(false);
+  const searchEl = useRef(null)
   const setSearchHandler = () => setSearch(!search)
+  useEffect(() => {
+    const search$ = fromEvent(searchEl.current, "keyup").pipe(
+      distinctUntilChanged(),
+      debounceTime(500),
+      pluck("target", "value")
+    )
+    combineLatest([search$, Users$]).pipe(
+      switchMap(([v, users]) => {
+        const pattern = new RegExp(v, "ig")
+        const searchedUsers = users.filter(user => user.login.match(pattern))
+        if (searchedUsers.length === 0 || !v)
+          searchedUsers$.next([])
+        else
+          searchedUsers$.next(searchedUsers)
+        return of(searchedUsers)
+      })
+    ).subscribe()
+  }, [])
   return (
     <Container>
       <InputContainer>
-        <Input opacity={search ? 1 : 0} placeholder='Search' onBlur={setSearchHandler} />
+        <Input ref={searchEl} opacity={search ? 1 : 0} placeholder='Search' onChange={()=>loading$.next(true)} onBlur={setSearchHandler} />
         <Image transform={search ? 0 : 178} onClick={setSearchHandler} src={`${process.env.PUBLIC_URL}/icons/searchIcons.png`} />
       </InputContainer>
     </Container>
   )
 }
+
+
 
 export default GitSearchBar

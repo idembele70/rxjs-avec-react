@@ -1,10 +1,10 @@
-import React, { useEffect, useId, useState } from 'react'
+import React, { useEffect, useId, useInsertionEffect, useState } from 'react'
 import styled from 'styled-components';
-import { loading$, Users$ } from '../../rxjs';
+import { loading$, searchedUsers$, Users$ } from '../../rxjs';
 import GitSearchBar from './GitSearchBar';
 import GitUserCard from './GitUserCard';
 import uniqid from 'uniqid'
-import { pipe, tap } from 'rxjs';
+import { combineLatest, EMPTY, endWith, pipe, Subject, tap } from 'rxjs';
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -29,34 +29,40 @@ const GitUserSearch = () => {
   const [usersList, setUsersList] = useState([]);
   const [usersRender, setUsersRender] = useState([]);
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
+  useInsertionEffect(() => {
     loading$.subscribe(
-      v => setLoading(v)
+      v => {
+        setLoading(v)
+      }
     )
-    Users$.subscribe(v => {
-      setUsersList(v)
-    })
+    combineLatest([Users$, searchedUsers$]).subscribe(
+      ([users, searchedUsers]) => {
+        if (searchedUsers.length)
+          setUsersList(searchedUsers)
+        else
+          setUsersList(users)
+      }
+    )
   })
 
   useEffect(() => {
-    pipe(
-      tap(
-        setUsersRender(
-          usersList.map((user, idx) => {
-            const { login, avatar_url, html_url } = user
-            const id = uniqid()
-            const props = { id, login, avatar_url, html_url }
-            return <GitUserCard key={id} {...props} id={id} />
-          })
-        )
-      ),
-      tap(
-        loading$.next(false)
+    EMPTY.
+      pipe(
+        tap(
+          setUsersRender(
+            usersList.map((user, idx) => {
+              const { login, avatar_url, html_url } = user
+              const id = uniqid()
+              const props = { id, login, avatar_url, html_url }
+              return <GitUserCard key={id} {...props} id={id} />
+            })
+          )
+        ),
+        endWith(loading$.next(false))
       )
-    )
 
   }, [usersList])
-
+  if (loading) "loading..."
   return (
     <Container>
       <Top><GitSearchBar /></Top>
