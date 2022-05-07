@@ -1,13 +1,62 @@
-import { BehaviorSubject, catchError, from, map, merge, mergeMap, of, Subject, throwError, timer } from "rxjs";
+import {
+  BehaviorSubject,
+  catchError,
+  fromEvent,
+  map,
+  mergeMap,
+  of,
+  takeUntil,
+  withLatestFrom,
+} from "rxjs";
 import { ajax } from "rxjs/ajax";
 
+// const biggestData = [
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+//   ...v,
+// ]
 export const Users$ = new BehaviorSubject([]);
-export const loading$ = new Subject();
+export const loading$ = new BehaviorSubject(true);
+export const searching$ = new BehaviorSubject(false);
 export const searchedUsers$ = new BehaviorSubject([]);
-(() => new Promise(resolve => {
-  ajax.getJSON("https://api.github.com/users?per_page=135").pipe(
-    map(v => [...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v, ...v]),
-    catchError(e => of(e))
-  ).subscribe(resolve)
-})
-)().then(usersList => Users$.next(usersList))
+(() =>
+  new Promise((resolve) => {
+    ajax
+      .getJSON("https://api.github.com/users?per_page=135")
+      .pipe(
+        map((v) => v),
+        catchError((e) => of(e))
+      )
+      .subscribe(resolve);
+  }))().then((usersList) => Users$.next(usersList));
+
+// DO NOT TOUCH TOP !
+
+const mouseUp$ = fromEvent(document, "mouseup");
+
+const mouseMove$ = fromEvent(document, "mousemove");
+const mouseDown$ = fromEvent(document, "mousedown")
+  .pipe(
+    mergeMap(() =>
+      mouseMove$.pipe(
+        map((e) => ({ x: e.clientX, y: e.clientY })),
+        takeUntil(mouseUp$)
+      )
+    )
+  )
+  .subscribe(console.log);
