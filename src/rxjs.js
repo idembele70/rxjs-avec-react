@@ -1,12 +1,14 @@
 import {
   BehaviorSubject,
   catchError,
+  distinctUntilChanged,
+  from,
   fromEvent,
+  interval,
   map,
   mergeMap,
   of,
-  takeUntil,
-  withLatestFrom,
+  scan,
 } from "rxjs";
 import { ajax } from "rxjs/ajax";
 
@@ -46,17 +48,3 @@ export const searchedUsers$ = new BehaviorSubject([]);
   }))().then((usersList) => Users$.next(usersList));
 
 // DO NOT TOUCH TOP !
-
-const mouseUp$ = fromEvent(document, "mouseup");
-
-const mouseMove$ = fromEvent(document, "mousemove");
-const mouseDown$ = fromEvent(document, "mousedown")
-  .pipe(
-    mergeMap(() =>
-      mouseMove$.pipe(
-        map((e) => ({ x: e.clientX, y: e.clientY })),
-        takeUntil(mouseUp$)
-      )
-    )
-  )
-  .subscribe(console.log);

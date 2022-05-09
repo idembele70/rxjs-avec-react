@@ -9,3 +9,5 @@
     4.1 - Example 2: Countdown timer with pause and resume ❌ 2 Mai 2022
 5 - https://www.learnrxjs.io/learn-rxjs/subjects/behaviorsubject
     5.1 - Example 2: BehaviorSubject with new subscribers created on mouse clicks
+6 - https://www.learnrxjs.io/learn-rxjs/operators/transformation/scan
+    6.1 - Emitting random values from the accumulated array.

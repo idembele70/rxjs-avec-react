@@ -62,26 +62,26 @@
     2 - Example 2: Take the first 5 even numbers ❌ 28 Avril 2022
     3 -  Example 3: Take mouse events on mouse down until mouse up ❌ 1 Mai 2022
 17 - https://www.learnrxjs.io/learn-rxjs/operators/transformation/buffertime
-    1 - Example 1: Buffer for 2 seconds ❌ 1 Mai 2022
-    2 - Example 2: Multiple active buffers ❌ 1 Mai 2022
+    1 - Example 1: Buffer for 2 seconds ❌ 8 Mai 2022
+    2 - Example 2: Multiple active buffers ❌ 8 Mai 2022
 18 - https://www.learnrxjs.io/learn-rxjs/operators/transformation/concatmap
-    1 - Example 1: Demonstrating the difference between concatMap and mergeMap ❌ 1 Mai 2022
-    2 - Example 2: Map to promise ❌ 1 Mai 2022
-    3 - Example 3: Supplying a projection function ❌ 1 Mai 2022
+    1 - Example 1: Demonstrating the difference between concatMap and mergeMap ❌ 8 Mai 2022
+    2 - Example 2: Map to promise ❌ 8 Mai 2022
+    3 - Example 3: Supplying a projection function ❌ 9 Mai 2022
 19 - https://www.learnrxjs.io/learn-rxjs/operators/transformation/map
     1 - Example 1: Add 10 to each number ✅ 1 Mai 2022
     2 - Example 2: Map to single property ✅ 1 Mai 2022
 20 - https://www.learnrxjs.io/learn-rxjs/operators/transformation/mergemap
-    1 - Example 1: mergeMap simulating save of click locations ❌ 1 Mai 2022
-    2 - Example 2: mergeMap with ajax observable ❌ 1 Mai 2022
-    3 - Example 3: mergeMap with promise (could also use from to convert to observable) ❌ 1 Mai 2022
-    4 - Example 4: mergeMap with resultSelector // deprecated
-    5 - Example 5: mergeMap with concurrent value // deprecated
+    1 - Example 1: mergeMap simulating save of click locations ❌ 9 Mai 2022
+    2 - Example 2: mergeMap with ajax observable on mouse click ❌ 9 Mai 2022
+    3 - Example 3: mergeMap with promise (could also use from to convert to observable) ❌ 9 Mai 2022
+    4 - Example 4: mergeMap with resultSelector // deprecated use Map instead ❌ 9 Mai 2022
+    5 - Example 5: mergeMap with concurrent value // deprecated use Map instead ❌ 9 Mai 2022
 21 - https://www.learnrxjs.io/learn-rxjs/operators/transformation/scan
-    1 - Example 1: Sum over time ❌ 1 Mai 2022
-    2 - Example 2: Accumulating an object ❌ 1 Mai 2022
-    3 - Example 3: Emitting random values from the accumulated array. ❌ 1 Mai 2022
-    4 - Example 4: Accumulating http responses over time ❌ 1 Mai 2022
+    1 - Example 1: Sum over time ✅ 9 Mai 2022
+    2 - Example 2: Accumulating an object ✅ 9 Mai 2022
+    3 - Example 3: Emitting random values from the accumulated array. ❌ 9 Mai 2022
+    4 - Example 4: Accumulating http responses over time ✅ 9 Mai 2022
 22 - https://www.learnrxjs.io/learn-rxjs/operators/transformation/switchmap
     1 - Example 1: Restart interval on every click ❌ 2 Mai 2022
     2 - Example 2: Countdown timer with pause and resume ❌ 2 Mai 2022

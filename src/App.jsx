@@ -1,6 +1,23 @@
-import React, { useEffect, useRef } from "react";
+import {
+  pluckCurrentTargetChecked,
+  useObservableCallback,
+  useObservableState,
+  useSubscription,
+} from "observable-hooks";
+import React from "react";
+import {
+  debounceTime,
+  delay,
+  distinctUntilChanged,
+  interval,
+  map,
+  mergeMap,
+  of,
+  pluck,
+  scan,
+  tap,
+} from "rxjs";
 import styled from "styled-components";
-import GitUserSearch from "./Exercice/GitUserSearch/GitUserSearch";
 
 const Container = styled.div`
   height: 100vh;
@@ -36,17 +53,19 @@ const Input = styled.input`
   outline: none;
   font-size: 1rem;
 `;
+
 export default function App() {
-  const continueEl = useRef(null);
-  const stopEl = useRef(null);
-  const inputEl = useRef(null);
-  useEffect(() => {
+  const [onChange, textChange$] = useObservableCallback((e$) =>
+    e$.pipe(pluck("target", "value"), debounceTime(500), distinctUntilChanged())
+  );
+  useSubscription(textChange$, (v) => console.log(v));
+  React.useEffect(() => {
     return () => {};
   }, []);
 
   return (
     <Container>
-      <GitUserSearch />
+      <Input onChange={onChange} />
     </Container>
   );
 }
