@@ -1,14 +1,13 @@
 import {
   BehaviorSubject,
   catchError,
-  distinctUntilChanged,
-  from,
   fromEvent,
   interval,
   map,
+  merge,
   mergeMap,
   of,
-  scan,
+  tap,
 } from "rxjs";
 import { ajax } from "rxjs/ajax";
 
@@ -48,3 +47,5 @@ export const searchedUsers$ = new BehaviorSubject([]);
   }))().then((usersList) => Users$.next(usersList));
 
 // DO NOT TOUCH TOP !
+
+export const searchTerm$ = new BehaviorSubject("");

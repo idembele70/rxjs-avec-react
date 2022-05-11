@@ -83,19 +83,19 @@
     3 - Example 3: Emitting random values from the accumulated array. ❌ 9 Mai 2022
     4 - Example 4: Accumulating http responses over time ✅ 9 Mai 2022
 22 - https://www.learnrxjs.io/learn-rxjs/operators/transformation/switchmap
-    1 - Example 1: Restart interval on every click ❌ 2 Mai 2022
-    2 - Example 2: Countdown timer with pause and resume ❌ 2 Mai 2022
+    1 - Example 1: Restart interval on every click ❌ 10 Mai 2022
+    2 - Example 2: Countdown timer with pause and resume ❌ 10 Mai 2022
     3 - Example 3: Using a resultSelector function // Deprecated
 23 - https://www.learnrxjs.io/learn-rxjs/operators/utility/do
-    1 - Example 1: Logging with tap
-    2 - Example 2: Using tap with object
+    1 - Example 1: Logging with tap ❌ 10 Mai 2022
+    2 - Example 2: Using tap with object ❌ 10 Mai 2022
 24 - https://www.learnrxjs.io/learn-rxjs/operators/utility/delay
-    1 - Example 1: Delay to recognize long press
-    2 - Example 2: Delay for increasing durations
+    1 - Example 1: Delay to recognize long press ❌ 10 Mai 2022
+    2 - Example 2: Delay for increasing durations ❌ 10 Mai 2022
 25 - https://www.learnrxjs.io/learn-rxjs/subjects/asyncsubject
-    1 - Example 1: simple AsyncSubject
+    1 - Example 1: simple AsyncSubject ❌ 10 Mai 2022
 26 - https://www.learnrxjs.io/learn-rxjs/subjects/behaviorsubject
     1 - Example 1: Simple BehaviorSubject
     2 - Example 2: BehaviorSubject with new subscribers created on mouse clicks
-
-
+27 - https://www.learnrxjs.io/learn-rxjs/subjects/replaysubject
+    1 - Example 1: simple ReplaySubject

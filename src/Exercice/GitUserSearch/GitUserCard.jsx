@@ -1,32 +1,32 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import styled from 'styled-components';
+import PropTypes from "prop-types";
+import React from "react";
+import styled from "styled-components";
 const Container = styled.div`
   min-height: 175px;
   width: 95vw;
   max-width: 350px;
   border-radius: 5px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   box-shadow: 0px 4px 75px rgba(0, 0, 0, 0.25);
   display: flex;
 `;
 const Left = styled.div`
-  flex:1;
+  flex: 1;
   max-width: 175px;
-  background-image: url(${props => props.bgUrl});
+  background-image: url(${(props) => props.bgUrl});
   background-size: contain;
-  `;
+`;
 const Right = styled.div`
-  flex:1;
+  flex: 1;
   padding: 6px;
 `;
 const Title = styled.h2`
   font-style: normal;
-font-weight: 700;
-font-size: 35px;
-line-height: 42px;
-text-align: center;
-margin: 5px 0;
+  font-weight: 700;
+  font-size: 35px;
+  line-height: 42px;
+  text-align: center;
+  margin: 5px 0;
 `;
 const Id = styled.h5`
   font-style: normal;
@@ -44,11 +44,9 @@ const IconLink = styled.a`
   width: 50px;
   margin: 0 auto;
 `;
-const Icon = styled.img`
-  
-  `
-const GitUserCard = props => {
-  const { id, login, avatar_url, html_url } = props
+const Icon = styled.img``;
+const GitUserCard = (props) => {
+  const { id, login, avatar_url, html_url } = props;
   return (
     <Container>
       <Left bgUrl={avatar_url} />
@@ -60,14 +58,14 @@ const GitUserCard = props => {
         </IconLink>
       </Right>
     </Container>
-  )
-}
+  );
+};
 
 GitUserCard.propTypes = {
   id: PropTypes.string.isRequired,
   login: PropTypes.string.isRequired,
   avatar_url: PropTypes.string.isRequired,
-  html_url: PropTypes.string.isRequired
-}
+  html_url: PropTypes.string.isRequired,
+};
 
-export default GitUserCard
+export default GitUserCard;

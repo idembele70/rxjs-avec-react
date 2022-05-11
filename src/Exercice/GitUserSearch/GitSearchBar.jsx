@@ -1,32 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
 import {
-  combineLatest,
-  concatMap,
-  debounceTime,
-  delay,
-  distinctUntilChanged,
-  endWith,
-  filter,
-  finalize,
-  from,
-  fromEvent,
-  map,
-  of,
-  pluck,
-  startWith,
-  switchMap,
-  tap,
-  withLatestFrom,
-} from "rxjs";
+  pluckCurrentTargetValue,
+  useObservableCallback,
+  useSubscription,
+} from "observable-hooks";
 import styled from "styled-components";
-import {
-  loading$,
-  searchedTerm$,
-  searchedUsers$,
-  searching$,
-  Users$,
-} from "../../rxjs";
-import GitUserSearch from "./GitUserSearch";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { searchTerm$ } from "../../rxjs";
 const Container = styled.div`
   width: 90vw;
   max-width: 250px;
@@ -67,6 +47,7 @@ const Input = styled.input`
   font-size: 20px;
   opacity: ${(props) => props.opacity};
   transition: all 200ms linear;
+  cursor: ${(props) => (props.opacity ? "text" : "default")};
   ::placeholder {
     font-family: "Inter";
     font-style: normal;
@@ -76,63 +57,24 @@ const Input = styled.input`
 `;
 const GitSearchBar = () => {
   const [search, setSearch] = useState(false);
-  const [searchedUsers, setSearchedUsers] = useState([]);
-  const setSearchHandler = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  useSubscription(searchTerm$, (v) => setSearchTerm(v));
+  const [handleSearch, textChange$] = useObservableCallback(
+    pluckCurrentTargetValue
+  );
+  const setSearchHandler = (e) => {
+    e.preventDefault();
     setSearch(!search);
-    searching$.next(false);
   };
-  const searchEl = useRef(null);
-  useEffect(() => {
-    const newUsers = [];
-    const searchEv = fromEvent(searchEl.current, "input")
-      .pipe(
-        tap(() => loading$.next(true)),
-        pluck("target", "value"),
-        debounceTime(500),
-        distinctUntilChanged(),
-        concatMap(() =>
-          of(
-            loading$.next(true),
-            tap(() => searchedUsers$.next([]))
-          )
-        ),
-        filter((v) => v.length),
-        withLatestFrom(Users$),
-        switchMap(([searchTerm, users]) => {
-          return from(users).pipe(
-            filter((u) => u.login.toLowerCase().includes(searchTerm))
-          );
-        }),
-        tap(() => loading$.next(false))
-      )
-      .subscribe();
-    return () => {
-      searchEv.unsubscribe();
-    };
-  }, []);
-  useEffect(() => {
-    //combineLatest([searchedTerm$, Users$])
-    //  .pipe(
-    //    switchMap(([v, users]) => {
-    //      const pattern = new RegExp(v, "ig")
-    //      const searchedUsers = users.filter((user) =>
-    //        user.login.match(pattern)
-    //      )
-    //      if (searchedUsers.length === 0 || !v) searchedUsers$.next([])
-    //      else searchedUsers$.next(searchedUsers)
-    //      return of(searchedUsers)
-    //    })
-    //  )
-    //  .subscribe()
-  }, []);
+  useSubscription(textChange$, (v) => searchTerm$.next(v));
   return (
     <Container>
       <InputContainer>
         <Input
-          ref={searchEl}
           opacity={search ? 1 : 0}
           placeholder="Search"
-          onFocus={() => searching$.next(true)}
+          value={searchTerm}
+          onChange={handleSearch}
           onBlur={setSearchHandler}
         />
         <Image

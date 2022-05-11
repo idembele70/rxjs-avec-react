@@ -1,23 +1,8 @@
-import {
-  pluckCurrentTargetChecked,
-  useObservableCallback,
-  useObservableState,
-  useSubscription,
-} from "observable-hooks";
+import { useObservableEagerState } from "observable-hooks";
 import React from "react";
-import {
-  debounceTime,
-  delay,
-  distinctUntilChanged,
-  interval,
-  map,
-  mergeMap,
-  of,
-  pluck,
-  scan,
-  tap,
-} from "rxjs";
+import { ReplaySubject } from "rxjs";
 import styled from "styled-components";
+import GitUserSearch from "./Exercice/GitUserSearch/GitUserSearch";
 
 const Container = styled.div`
   height: 100vh;
@@ -55,17 +40,10 @@ const Input = styled.input`
 `;
 
 export default function App() {
-  const [onChange, textChange$] = useObservableCallback((e$) =>
-    e$.pipe(pluck("target", "value"), debounceTime(500), distinctUntilChanged())
-  );
-  useSubscription(textChange$, (v) => console.log(v));
-  React.useEffect(() => {
-    return () => {};
-  }, []);
-
+  React.useEffect(() => {}, []);
   return (
     <Container>
-      <Input onChange={onChange} />
+      <GitUserSearch />
     </Container>
   );
 }
