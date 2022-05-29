@@ -1,4 +1,5 @@
 import React from "react";
+import { FixedSizeList as List } from "react-window";
 import styled from "styled-components";
 import { usersRender } from "./api";
 import GitSearchBar from "./GitSearchBar";
@@ -34,7 +35,9 @@ const GitUserSearch = () => {
         <GitSearchBar />
       </Top>
       <Bottom>
-        <GitUserSuggests />
+        <List itemCount={135} itemSize={168} height={768} width={900}>
+          <GitUserSuggests />
+        </List>
       </Bottom>
     </Container>
   );

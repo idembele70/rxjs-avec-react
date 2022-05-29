@@ -1,14 +1,4 @@
-import {
-  BehaviorSubject,
-  catchError,
-  fromEvent,
-  interval,
-  map,
-  merge,
-  mergeMap,
-  of,
-  tap,
-} from "rxjs";
+import { BehaviorSubject, catchError, map, of } from "rxjs";
 import { ajax } from "rxjs/ajax";
 
 // const biggestData = [
@@ -49,3 +39,5 @@ export const searchedUsers$ = new BehaviorSubject([]);
 // DO NOT TOUCH TOP !
 
 export const searchTerm$ = new BehaviorSubject("");
+
+// DO NOT TOUCH TO TOP !!!!

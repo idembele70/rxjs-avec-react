@@ -1,11 +1,35 @@
-import { useObservableEagerState } from "observable-hooks";
+import {
+  useObservable,
+  useObservableCallback,
+  useObservableState,
+  useSubscription,
+} from "observable-hooks";
 import React from "react";
-import { ReplaySubject } from "rxjs";
+import {
+  concat,
+  debounceTime,
+  defer,
+  delay,
+  distinctUntilChanged,
+  EMPTY,
+  filter,
+  interval,
+  map,
+  merge,
+  mergeMap,
+  of,
+  pluck,
+  scan,
+  share,
+  startWith,
+  switchAll,
+  switchMap,
+  tap,
+  timer,
+} from "rxjs";
 import styled from "styled-components";
-import GitUserSearch from "./Exercice/GitUserSearch/GitUserSearch";
-
 const Container = styled.div`
-  height: 100vh;
+  height: 200vh;
   width: 100vw;
 `;
 const Displayer = styled.h2`
@@ -24,7 +48,7 @@ const Button = styled.button`
   cursor: pointer;
   display: block;
   color: ${(props) => props.color};
-  background-color: #000;
+  background-color: black;
   text-transform: uppercase;
   &:hover {
     color: ${(props) => props.yellow};
@@ -40,10 +64,42 @@ const Input = styled.input`
 `;
 
 export default function App() {
+  const [isSaving, setIsSaving] = React.useState("All changes saved");
+  const saveChange = (v) => of(v).pipe(delay(1500));
+  const [handleChange, input$] = useObservableCallback((e$) =>
+    e$.pipe(
+      debounceTime(500),
+      pluck("target", "value"),
+      distinctUntilChanged(),
+      share()
+    )
+  );
+  const saving$ = useObservable(() =>
+    input$.pipe(
+      map(() => of("Saving")),
+      tap(() => setIsSaving(true))
+    )
+  );
+  const saved$ = useObservable(() =>
+    input$.pipe(
+      mergeMap(saveChange),
+      tap(() => setIsSaving(false)),
+      filter(() => !isSaving),
+      map(() =>
+        concat(of("Saved!"), timer(3000)).pipe(
+          map(() => `Last updated: ${Date.now()}`)
+        )
+      )
+    )
+  );
+  const merged$ = useObservable(() => merge(saving$, saved$).pipe(switchAll()));
+  const msg = useObservableState(merged$, "All changes saved");
   React.useEffect(() => {}, []);
   return (
     <Container>
-      <GitUserSearch />
+      <Displayer>Take a note!</Displayer>
+      <Input onChange={handleChange} />
+      <Displayer>{msg}</Displayer>
     </Container>
   );
 }
