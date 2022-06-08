@@ -1,38 +1,41 @@
 import {
   useObservable,
   useObservableCallback,
+  useObservableGetState,
+  useObservableState,
   useSubscription,
 } from "observable-hooks";
 import React from "react";
 import {
-  combineLatest,
+  BehaviorSubject,
   concat,
   concatAll,
   concatMap,
-  count,
+  debounceTime,
   delay,
+  distinctUntilChanged,
   EMPTY,
-  endWith,
   filter,
-  from,
+  fromEvent,
   interval,
   map,
+  merge,
+  mergeAll,
   mergeMap,
   of,
   scan,
   share,
   startWith,
+  switchAll,
   switchMap,
-  take,
-  takeUntil,
   tap,
   timer,
-  withLatestFrom,
 } from "rxjs";
 import styled from "styled-components";
 const Container = styled.div`
   height: 200vh;
   width: 100vw;
+  padding: 5px;
 `;
 const Displayer = styled.h2`
   font-size: 24px;
@@ -75,28 +78,51 @@ const Progress = styled.div`
   height: 21px;
   transition: all 500ms ease;
 `;
+const Paragraph = styled.p``;
+const RightText = styled.p`
+  text-align: right;
+  width: 190px;
+`;
 export default function App() {
-  const [message, setMessage] = React.useState(null);
-  const source$ = useObservable(() =>
-    interval(1000).pipe(filter((v) => v % 2 === 0))
-  );
-  const evenNumberCount$ = useObservable(() =>
-    source$.pipe(scan((acc) => acc + 1, 0))
-  );
-  const firstFiveEvenNum$ = useObservable(() =>
-    evenNumberCount$.pipe(filter((v) => v > 1))
-  );
-  const combined$ = useObservable(() =>
-    source$.pipe(
-      withLatestFrom(evenNumberCount$),
-      map(([value, count]) => `Count: ${count} value : ${value}`),
-      takeUntil(firstFiveEvenNum$),
-      endWith("Finished")
+  const [handleWriteNote, WriteNote$] = useObservableCallback((e$) =>
+    e$.pipe(
+      debounceTime(500),
+      map((e) => e.target.value),
+      distinctUntilChanged(),
+      share()
     )
   );
-  useSubscription(combined$, (v) => {
-    if (v === "Finished") setMessage(v);
-    else console.log(v);
-  });
-  return <Container>{message}</Container>;
+  const [isSaving, setIsSaving] = React.useState(false);
+  const savingNote$ = useObservable(() =>
+    WriteNote$.pipe(
+      switchMap(() => of("saving")),
+      tap(() => setIsSaving(true))
+    )
+  );
+  const noteSaved$ = useObservable(
+    () =>
+      WriteNote$.pipe(
+        mergeMap((v) => of(v).pipe(delay(2000))),
+        tap(() => setIsSaving(false)),
+        filter(() => isSaving === false),
+        switchMap(() =>
+          concat(
+            of("saved"),
+            EMPTY.pipe(
+              startWith(`Last updated: ${new Date().toLocaleTimeString()}`),
+              delay(2000)
+            )
+          )
+        )
+      ) // waiting for fake data
+  );
+  const merged$ = useObservable(() => merge(savingNote$, noteSaved$));
+  useSubscription(merged$);
+  return (
+    <Container>
+      <Paragraph>Take a note!</Paragraph>
+      <Input onChange={handleWriteNote} />
+      <RightText>{useObservableState(merged$, "All changes saved")}</RightText>
+    </Container>
+  );
 }
