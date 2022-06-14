@@ -5,7 +5,7 @@ import {
   useObservableState,
   useSubscription,
 } from "observable-hooks";
-import React from "react";
+import React, { useState } from "react";
 import {
   BehaviorSubject,
   concat,
@@ -15,6 +15,7 @@ import {
   debounceTime,
   delay,
   distinctUntilChanged,
+  distinctUntilKeyChanged,
   EMPTY,
   filter,
   from,
@@ -25,6 +26,7 @@ import {
   mergeAll,
   mergeMap,
   of,
+  pluck,
   scan,
   share,
   startWith,
@@ -87,38 +89,43 @@ const RightText = styled.p`
   width: 190px;
 `;
 export default function App() {
-  const [progressWidth, setProgressWidth] = React.useState(0);
-  const [displayMsg, setdisplayMsg] = React.useState([]);
-  const [handleClick, click$] = useObservableCallback((e$) => e$);
-  const requestOne$ = useObservable(() => of("First")).pipe(delay(1000));
-  const requestTwo$ = useObservable(() => of("Second")).pipe(delay(1000));
-  const requestThree$ = useObservable(() => of("Third")).pipe(delay(1000));
-  const requestFour$ = useObservable(() => of("Fourth")).pipe(delay(1000));
-  const obs = [requestOne$, requestTwo$, requestThree$, requestFour$];
-  const array$ = useObservable(() => from(obs));
-  const request$ = useObservable(() => array$.pipe(concatAll()));
-  const count$ = useObservable(() => array$.pipe(count()));
-  const progress$ = useObservable(() =>
-    click$.pipe(
-      switchMap(() => request$),
+  const [handleChange, change$] = useObservableCallback((e$) =>
+    e$.pipe(
+      debounceTime(500),
+      distinctUntilKeyChanged((e) => e.target.value),
       share()
     )
   );
-  const ratio$ = useObservable(() =>
-    progress$.pipe(
-      scan((acc) => acc + 1, 0),
-      withLatestFrom(count$),
-      map(([cur, total]) => (100 * cur) / total)
+  const [isSaving, setIsSaving] = useState(false);
+  const saveInProgress$ = useObservable(() =>
+    change$.pipe(
+      map(() => of("Saving")),
+      tap(() => setIsSaving(true))
     )
   );
-  const clicky$ = useObservable(() => click$.pipe(switchMap(() => ratio$)));
-  useSubscription(clicky$, setProgressWidth);
-  useSubscription(progress$, (v) => setProgressWidth([...displayMsg, v]));
+  const saveCompleted$ = useObservable(() =>
+    change$.pipe(
+      mergeMap((v) => of(v).pipe(delay(1000))),
+      tap(() => setIsSaving(false)),
+      filter(() => !isSaving),
+      map(() =>
+        concat(
+          of("saved"),
+          timer(1000).pipe(
+            map(() => `Last save: ${new Date().toLocaleTimeString()}`)
+          )
+        )
+      )
+    )
+  );
+  const merged$ = useObservable(() =>
+    merge(saveCompleted$, saveInProgress$).pipe(switchAll())
+  );
   return (
     <Container>
-      <Progress width={progressWidth} />
-      <Button onClick={handleClick}>Load Data</Button>
-      {displayMsg}
+      <Paragraph>Take a note!</Paragraph>
+      <Input onChange={handleChange} />
+      <RightText>{useObservableState(merged$, "All Changes saved!")}</RightText>
     </Container>
   );
 }
