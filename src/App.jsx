@@ -11,11 +11,13 @@ import {
   concat,
   concatAll,
   concatMap,
+  count,
   debounceTime,
   delay,
   distinctUntilChanged,
   EMPTY,
   filter,
+  from,
   fromEvent,
   interval,
   map,
@@ -30,6 +32,7 @@ import {
   switchMap,
   tap,
   timer,
+  withLatestFrom,
 } from "rxjs";
 import styled from "styled-components";
 const Container = styled.div`
@@ -84,45 +87,38 @@ const RightText = styled.p`
   width: 190px;
 `;
 export default function App() {
-  const [handleWriteNote, WriteNote$] = useObservableCallback((e$) =>
-    e$.pipe(
-      debounceTime(500),
-      map((e) => e.target.value),
-      distinctUntilChanged(),
+  const [progressWidth, setProgressWidth] = React.useState(0);
+  const [displayMsg, setdisplayMsg] = React.useState([]);
+  const [handleClick, click$] = useObservableCallback((e$) => e$);
+  const requestOne$ = useObservable(() => of("First")).pipe(delay(1000));
+  const requestTwo$ = useObservable(() => of("Second")).pipe(delay(1000));
+  const requestThree$ = useObservable(() => of("Third")).pipe(delay(1000));
+  const requestFour$ = useObservable(() => of("Fourth")).pipe(delay(1000));
+  const obs = [requestOne$, requestTwo$, requestThree$, requestFour$];
+  const array$ = useObservable(() => from(obs));
+  const request$ = useObservable(() => array$.pipe(concatAll()));
+  const count$ = useObservable(() => array$.pipe(count()));
+  const progress$ = useObservable(() =>
+    click$.pipe(
+      switchMap(() => request$),
       share()
     )
   );
-  const [isSaving, setIsSaving] = React.useState(false);
-  const savingNote$ = useObservable(() =>
-    WriteNote$.pipe(
-      switchMap(() => of("saving")),
-      tap(() => setIsSaving(true))
+  const ratio$ = useObservable(() =>
+    progress$.pipe(
+      scan((acc) => acc + 1, 0),
+      withLatestFrom(count$),
+      map(([cur, total]) => (100 * cur) / total)
     )
   );
-  const noteSaved$ = useObservable(
-    () =>
-      WriteNote$.pipe(
-        mergeMap((v) => of(v).pipe(delay(2000))),
-        tap(() => setIsSaving(false)),
-        filter(() => isSaving === false),
-        switchMap(() =>
-          concat(
-            of("saved"),
-            EMPTY.pipe(
-              startWith(`Last updated: ${new Date().toLocaleTimeString()}`),
-              delay(2000)
-            )
-          )
-        )
-      ) // waiting for fake data
-  );
-  const merged$ = useObservable(() => merge(savingNote$, noteSaved$));
-  useSubscription(merged$);
+  const clicky$ = useObservable(() => click$.pipe(switchMap(() => ratio$)));
+  useSubscription(clicky$, setProgressWidth);
+  useSubscription(progress$, (v) => setProgressWidth([...displayMsg, v]));
   return (
     <Container>
-      <Paragraph>Take a note!</Paragraph>
-      <Input onChange={handleWriteNote} />
-      <RightText>{useObservableState(merged$, "All changes saved")}</RightText>
+      <Progress width={progressWidth} />
+      <Button onClick={handleClick}>Load Data</Button>
+      {displayMsg}
     </Container>
   );
 }
