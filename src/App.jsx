@@ -1,3 +1,4 @@
+import { click } from "@testing-library/user-event/dist/click";
 import {
   useObservable,
   useObservableCallback,
@@ -89,43 +90,44 @@ const RightText = styled.p`
   width: 190px;
 `;
 export default function App() {
-  const [handleChange, change$] = useObservableCallback((e$) =>
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [handleChange, onChange$] = useObservableCallback((e$) =>
     e$.pipe(
       debounceTime(500),
-      distinctUntilKeyChanged((e) => e.target.value),
+      pluck("target", "value"),
+      distinctUntilChanged(),
       share()
     )
   );
-  const [isSaving, setIsSaving] = useState(false);
   const saveInProgress$ = useObservable(() =>
-    change$.pipe(
-      map(() => of("Saving")),
+    onChange$.pipe(
+      map(() => of("saving")),
       tap(() => setIsSaving(true))
     )
   );
   const saveCompleted$ = useObservable(() =>
-    change$.pipe(
-      mergeMap((v) => of(v).pipe(delay(1000))),
+    onChange$.pipe(
       tap(() => setIsSaving(false)),
       filter(() => !isSaving),
       map(() =>
         concat(
           of("saved"),
-          timer(1000).pipe(
-            map(() => `Last save: ${new Date().toLocaleTimeString()}`)
+          of(`Last Updated: ${new Date().toLocaleTimeString()}`).pipe(
+            delay(1500)
           )
         )
       )
     )
   );
-  const merged$ = useObservable(() =>
+  const SaveDone$ = useObservable(() =>
     merge(saveCompleted$, saveInProgress$).pipe(switchAll())
   );
+  const saveRender = useObservableState(SaveDone$, "All changes saved!");
   return (
     <Container>
       <Paragraph>Take a note!</Paragraph>
       <Input onChange={handleChange} />
-      <RightText>{useObservableState(merged$, "All Changes saved!")}</RightText>
+      <RightText>{saveRender}</RightText>
     </Container>
   );
 }
