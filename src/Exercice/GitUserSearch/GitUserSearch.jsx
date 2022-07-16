@@ -1,7 +1,5 @@
 import React from "react";
-import { FixedSizeList as List } from "react-window";
 import styled from "styled-components";
-import { usersRender } from "./api";
 import GitSearchBar from "./GitSearchBar";
 import GitUserSuggests from "./GitUserSuggests";
 const Container = styled.div`
@@ -42,14 +40,3 @@ const GitUserSearch = () => {
 };
 
 export default GitUserSearch;
-
-/* 
-setUsersRender(
-          usersList.map((user) => {
-            const { login, avatar_url, html_url } = user;
-            const id = uniqid();
-            const props = { id, login, avatar_url, html_url };
-            return <GitUserCard key={id} {...props} id={id} />;
-          })
-        )
-*/

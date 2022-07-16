@@ -1,16 +1,37 @@
-import React from "react";
+import { useObservable, useSubscription } from "observable-hooks";
 import PropTypes from "prop-types";
-import uniqid from "uniqid";
+import React from "react";
+import { fromEvent, map } from "rxjs";
 import GitUserCard from "./GitUserCard";
 const GitUserCards = (props) => {
-  return props.list.map((user) => {
-    const { login, avatar_url, html_url } = user;
-    const id = uniqid();
-    const props = { id, login, avatar_url, html_url };
-    return <GitUserCard key={id} {...props} id={id} />;
+  const [limit, setLimit] = React.useState(15);
+  const scroll$ = useObservable(() =>
+    fromEvent(document, "scroll").pipe(
+      map(() => {
+        const { scrollHeight, clientHeight, scrollTop } =
+          document.documentElement;
+        const scrollMaxHeight = scrollHeight - clientHeight;
+        const scrollPosition = Math.round(scrollTop);
+        if (scrollMaxHeight <= scrollPosition) return true;
+        return false;
+      })
+    )
+  );
+  useSubscription(scroll$, (v) => {
+    if (v) setLimit(limit + 15);
   });
+  const [userList, setUserList] = React.useState([]);
+  React.useEffect(() => {
+    const newUsers = props.list.slice(0, limit).map((user, idx) => {
+      const { login, avatar_url, html_url } = user;
+      const props = { login, avatar_url, html_url };
+      return <GitUserCard key={idx} {...props} id={`${idx}`} />;
+    });
+    setUserList(newUsers);
+    return () => {};
+  }, [limit, props]);
+  return userList;
 };
-
 GitUserCards.propTypes = {
   list: PropTypes.array.isRequired,
 };

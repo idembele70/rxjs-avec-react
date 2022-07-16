@@ -46,7 +46,6 @@ const IconLink = styled.a`
 `;
 const Icon = styled.img``;
 const GitUserCard = (props) => {
-  console.log("render");
   const { id, login, avatar_url, html_url } = props;
   return (
     <Container>

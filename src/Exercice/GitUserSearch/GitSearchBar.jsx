@@ -3,11 +3,17 @@ import {
   useObservableCallback,
   useSubscription,
 } from "observable-hooks";
-import styled from "styled-components";
 import React, { useState } from "react";
-import PropTypes from "prop-types";
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  pluck,
+  share,
+  tap,
+} from "rxjs";
+import styled from "styled-components";
 import { searchTerm$ } from "../../rxjs";
-import { useNavigate } from "react-router-dom";
 const Container = styled.div`
   width: 90vw;
   max-width: 250px;
@@ -58,21 +64,13 @@ const Input = styled.input`
 `;
 const GitSearchBar = () => {
   const [search, setSearch] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  useSubscription(searchTerm$, (v) => setSearchTerm(v));
-  const [handleSearch, textChange$] = useObservableCallback(
-    pluckCurrentTargetValue
+  const [handleSearch, textChange$] = useObservableCallback((e$) =>
+    e$.pipe(debounceTime(200), pluck("target", "value"), distinctUntilChanged())
   );
   const setSearchHandler = (e) => {
     e.preventDefault();
     setSearch(!search);
-    //if (search)
-    //  navigate({
-    //    pathname: "search",
-    //    search: `?${e.target.value}`,
-    //  });
   };
-  const navigate = useNavigate();
   useSubscription(textChange$, (v) => {
     searchTerm$.next(v);
   });
@@ -82,7 +80,6 @@ const GitSearchBar = () => {
         <Input
           opacity={search ? 1 : 0}
           placeholder="Search"
-          value={searchTerm}
           onChange={handleSearch}
           onBlur={setSearchHandler}
         />

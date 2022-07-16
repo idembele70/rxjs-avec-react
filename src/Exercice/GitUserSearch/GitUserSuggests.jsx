@@ -6,14 +6,16 @@ import {
 import React from "react";
 import {
   catchError,
+  concatMap,
   debounceTime,
+  delay,
   distinctUntilChanged,
+  EMPTY,
   fromEvent,
   map,
   of,
   startWith,
   switchMap,
-  tap,
   timer,
 } from "rxjs";
 import { searchTerm$ } from "../../rxjs";
@@ -25,45 +27,25 @@ import StateLoading from "./StateLoading";
 
 const GitUserSuggests = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [limit, setLimit] = React.useState(15);
   useSubscription(searchTerm$, (v) => setSearchTerm(v));
   const status$ = useObservable(
     (inputs$) =>
       inputs$.pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        switchMap(([searchTerm, fetchFunc, limit]) =>
+        switchMap(([searchTerm, fetchFunc]) =>
           searchTerm
             ? timer(750).pipe(
-                switchMap(() => fetchFunc(searchTerm, limit)),
+                switchMap(() => fetchFunc(searchTerm)),
                 map((suggests) => <GitUserCards list={suggests} />),
-                catchError(() => of(<StateError />))
+                catchError(() => of(<StateError />)),
+                startWith(<StateLoading child="searching..." />)
               )
             : of(<StateDefault />)
         )
       ),
-    [searchTerm, fetchFunc, limit]
+    [searchTerm, fetchFunc]
   );
-  const [loading, setLoading] = React.useState(false);
-  const scroll$ = useObservable(() =>
-    fromEvent(document, "scroll").pipe(
-      map(() => {
-        const { scrollHeight, clientHeight, scrollTop } =
-          document.documentElement;
-        const scrollMaxHeight = scrollHeight - clientHeight;
-        const scrollPosition = Math.round(scrollTop);
-        if (scrollMaxHeight <= scrollPosition) {
-          setLoading(true);
-          return true;
-        }
-      })
-    )
-  );
-  useSubscription(scroll$, (v) => {
-    if (v) {
-      setLimit(limit + 15);
-    }
-  });
   return useObservableState(status$, () => <StateDefault />);
 };
 
