@@ -4,6 +4,7 @@ import { fromEvent, map } from "rxjs";
 import GitUserCards from "./GitUserCards";
 import styled from "styled-components";
 import StateLoading from "./StateLoading";
+import { fetchFunc } from "./api";
 const LoaderContainer = styled.div`
   flex: 0 0 100%;
   display: flex;
@@ -23,15 +24,12 @@ const StateDefault = () => {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:5000/users`)
-      .then((res) => res.json())
-      .then((usersList) =>
-        // Adding Timeout just for better user experience with the loader
-        setTimeout(() => {
-          setUsers(usersList);
-          setLoading(false);
-        }, 1500)
-      );
+
+    // Adding Timeout just for better user experience with the loader
+    setTimeout(() => {
+      setUsers(fetchFunc());
+      setLoading(false);
+    }, 1500);
     return () => {};
   }, []);
 
