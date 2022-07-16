@@ -79,6 +79,7 @@ const GitSearchBar = () => {
       <InputContainer>
         <Input
           opacity={search ? 1 : 0}
+          disabled={!search}
           placeholder="Search"
           onChange={handleSearch}
           onBlur={setSearchHandler}
