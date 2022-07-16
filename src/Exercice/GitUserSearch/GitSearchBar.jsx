@@ -7,6 +7,7 @@ import styled from "styled-components";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { searchTerm$ } from "../../rxjs";
+import { useNavigate } from "react-router-dom";
 const Container = styled.div`
   width: 90vw;
   max-width: 250px;
@@ -65,8 +66,16 @@ const GitSearchBar = () => {
   const setSearchHandler = (e) => {
     e.preventDefault();
     setSearch(!search);
+    //if (search)
+    //  navigate({
+    //    pathname: "search",
+    //    search: `?${e.target.value}`,
+    //  });
   };
-  useSubscription(textChange$, (v) => searchTerm$.next(v));
+  const navigate = useNavigate();
+  useSubscription(textChange$, (v) => {
+    searchTerm$.next(v);
+  });
   return (
     <Container>
       <InputContainer>

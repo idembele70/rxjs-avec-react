@@ -25,6 +25,7 @@ export const Users$ = new BehaviorSubject([]);
 export const loading$ = new BehaviorSubject(true);
 export const searching$ = new BehaviorSubject(false);
 export const searchedUsers$ = new BehaviorSubject([]);
+export const dataLength$ = new BehaviorSubject(0);
 (() =>
   new Promise((resolve) => {
     ajax

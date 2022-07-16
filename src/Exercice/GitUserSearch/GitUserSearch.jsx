@@ -6,7 +6,7 @@ import GitSearchBar from "./GitSearchBar";
 import GitUserSuggests from "./GitUserSuggests";
 const Container = styled.div`
   width: 100%;
-  height: 100%;
+  max-height: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -35,9 +35,7 @@ const GitUserSearch = () => {
         <GitSearchBar />
       </Top>
       <Bottom>
-        <List itemCount={135} itemSize={168} height={768} width={900}>
-          <GitUserSuggests />
-        </List>
+        <GitUserSuggests />
       </Bottom>
     </Container>
   );

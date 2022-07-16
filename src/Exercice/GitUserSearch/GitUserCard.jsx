@@ -46,6 +46,7 @@ const IconLink = styled.a`
 `;
 const Icon = styled.img``;
 const GitUserCard = (props) => {
+  console.log("render");
   const { id, login, avatar_url, html_url } = props;
   return (
     <Container>
@@ -68,4 +69,4 @@ GitUserCard.propTypes = {
   html_url: PropTypes.string.isRequired,
 };
 
-export default GitUserCard;
+export default React.memo(GitUserCard);
