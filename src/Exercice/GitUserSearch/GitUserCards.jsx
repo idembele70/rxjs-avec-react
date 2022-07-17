@@ -25,10 +25,10 @@ const GitUserCards = (props) => {
   React.useEffect(() => {
     if (props.list.length < 15) setUserList([]);
     const newUsers = props.list.slice(limit, limit + 15).map((user) => {
-      const { login, avatar_url, html_url, id } = user;
+      const { login, avatar_url, html_url } = user;
       const props = { login, avatar_url, html_url };
-      const idx = uniqid();
-      return <GitUserCard key={idx} {...props} id={`${idx}`} />;
+      const id = uniqid();
+      return <GitUserCard key={id} {...props} id={`${id}`} />;
     });
     setUserList((oldUsers) => {
       return [...oldUsers, ...newUsers];
