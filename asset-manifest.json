@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/rxjs-avec-react/static/js/main.4f6cd13b.js",
+    "main.js": "/rxjs-avec-react/static/js/main.1876b7f2.js",
     "index.html": "/rxjs-avec-react/index.html",
-    "main.4f6cd13b.js.map": "/rxjs-avec-react/static/js/main.4f6cd13b.js.map"
+    "main.1876b7f2.js.map": "/rxjs-avec-react/static/js/main.1876b7f2.js.map"
   },
   "entrypoints": [
-    "static/js/main.4f6cd13b.js"
+    "static/js/main.1876b7f2.js"
   ]
 }
