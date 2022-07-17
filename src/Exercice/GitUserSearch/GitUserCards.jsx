@@ -2,10 +2,10 @@ import { useObservable, useSubscription } from "observable-hooks";
 import PropTypes from "prop-types";
 import React from "react";
 import { fromEvent, map } from "rxjs";
-import GitUserCard from "./GitUserCard";
 import uniqid from "uniqid";
+import GitUserCard from "./GitUserCard";
 const GitUserCards = (props) => {
-  const [limit, setLimit] = React.useState(15);
+  const [limit, setLimit] = React.useState(0);
   const scroll$ = useObservable(() =>
     fromEvent(document, "scroll").pipe(
       map(() => {
@@ -23,13 +23,16 @@ const GitUserCards = (props) => {
   });
   const [userList, setUserList] = React.useState([]);
   React.useEffect(() => {
-    const newUsers = props.list.slice(0, limit).map((user) => {
-      const { login, avatar_url, html_url } = user;
+    if (props.list.length < 15) setUserList([]);
+    const newUsers = props.list.slice(limit, limit + 15).map((user) => {
+      const { login, avatar_url, html_url, id } = user;
       const props = { login, avatar_url, html_url };
       const idx = uniqid();
       return <GitUserCard key={idx} {...props} id={`${idx}`} />;
     });
-    setUserList(newUsers);
+    setUserList((oldUsers) => {
+      return [...oldUsers, ...newUsers];
+    });
     return () => {};
   }, [limit, props]);
   return userList;
