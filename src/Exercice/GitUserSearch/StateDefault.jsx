@@ -32,7 +32,6 @@ const StateDefault = () => {
     }, 1500);
     return () => {};
   }, []);
-
   return (
     <>
       <GitUserCards list={users} />
